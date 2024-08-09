@@ -1,5 +1,3 @@
-'use client'
-
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -10,15 +8,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { useAppSession } from '@/hooks'
-import { MODULE_ADDRESS } from '@/utils/constants'
-import { Args, Transaction } from '@roochnetwork/rooch-sdk'
-import { useRoochClient } from '@roochnetwork/rooch-sdk-kit'
-import { PropsWithChildren, useEffect, useState } from 'react'
+import { PropsWithChildren, useState } from 'react'
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { Args, Transaction } from '@roochnetwork/rooch-sdk'
+import { MODULE_ADDRESS } from '@/utils/constants'
+import { useCurrentWallet, useRoochClient } from '@roochnetwork/rooch-sdk-kit'
+import { useAppSession } from '@/hooks'
 
 interface FieldValues {
   deckName: string
@@ -29,41 +26,33 @@ interface Props {
   onCreated: () => void
 }
 
-export function AddDeckDialog({ children, onCreated }: PropsWithChildren<Props>) {
-  const form = useForm<FieldValues>({
-    defaultValues: {
-      deckName: '',
-      deckDesc: '',
-    },
-  })
+export function EditDeckDialog({ children, onCreated }: PropsWithChildren<Props>) {
+  const form = useForm<FieldValues>()
+  const currentWallet = useCurrentWallet()
   const client = useRoochClient()
   const { sessionKey } = useAppSession()
 
   const [open, setOpen] = useState(false)
 
-  useEffect(() => {
-    if (!open) {
-      form.reset()
-    }
-  }, [open])
-
   const onSubmit: SubmitHandler<FieldValues> = async (formValues) => {
     const tx = new Transaction()
     tx.callFunction({
       target: `${MODULE_ADDRESS}::deck::create_deck_entry`,
-      args: [Args.string(formValues.deckName), Args.string(formValues.deckDesc)],
+      args: [Args.string(formValues.deckName)],
     })
     const result = await client.signAndExecuteTransaction({
       transaction: tx,
       signer: sessionKey!,
     })
 
+    console.log(result)
+
     if (result.execution_info.status.type !== 'executed') {
       alert('Transaction failed')
       return
     }
 
-    onCreated()
+    await onCreated()
     setOpen(false)
   }
 
@@ -95,7 +84,7 @@ export function AddDeckDialog({ children, onCreated }: PropsWithChildren<Props>)
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea {...field} className="col-span-3" />
+                      <Input {...field} className="col-span-3" />
                     </FormControl>
                   </FormItem>
                 )}

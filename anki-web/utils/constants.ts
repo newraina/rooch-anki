@@ -1,4 +1,6 @@
 export const DEVNET_COUNTER_PACKAGE_ID = '0xTODO'
 export const MAINNET_COUNTER_PACKAGE_ID = '0xTODO'
 
-export const MODULE_ADDRESS = '0x647ee4dcd6a78fabd4e0cb1f54e6d374e0588976d2e353e1beb6441046e7fc58'
+export const MODULE_ADDRESS = process.env.NEXT_PUBLIC_MODULE_ADDRESS
+
+export const NETWORK_NAME = process.env.NEXT_PUBLIC_NETWORK_NAME

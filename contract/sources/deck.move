@@ -11,6 +11,7 @@ module anki::deck {
 
     struct Deck has key, store {
         name: String,
+        description: String,
         cards: vector<ObjectID>,
     }
 
@@ -33,13 +34,13 @@ module anki::deck {
     const ErrorDataEmpty: u64 = 2;
     const ErrorNotFound: u64 = 3;
 
-    public fun create_deck(creator: &signer, name: String): ObjectID {
+    public fun create_deck(creator: &signer, name: String, description: String): ObjectID {
         let _ = creator;
         let creator_address = signer::address_of(creator);
 
         check_name(name);
 
-        let deck = Deck { name, cards: vector::empty(), };
+        let deck = Deck { name, description, cards: vector::empty(), };
         let deck_obj = object::new(deck);
         let deck_id = object::id(&deck_obj);
         event::emit(DeckCreatedEvent { id: deck_id, creator: creator_address });
@@ -47,26 +48,31 @@ module anki::deck {
         deck_id
     }
 
-    public entry fun create_deck_entry(creator: &signer, name: String) {
-        create_deck(creator, name);
+    public entry fun create_deck_entry(creator: &signer, name: String, description: String) {
+        create_deck(creator, name, description);
     }
 
     public fun delete_deck(owner: &signer, deck_id: ObjectID) {
         let _ = owner;
         let deck_obj = object::take_object<Deck>(owner, deck_id);
-        let Deck { name: _, cards } = object::remove(deck_obj);
+        let Deck { name: _, description: _, cards } = object::remove(deck_obj);
         emit(DeckDeletedEvent { id: deck_id });
 
-        vector::for_each(cards, |card_id| {
-            card::delete_card_by_id(owner, card_id);
-        });
+        vector::for_each(
+            cards,
+            |card_id| {
+                card::delete_card_by_id(owner, card_id);
+            },
+        );
     }
 
     public entry fun delete_deck_entry(owner: &signer, deck_id: ObjectID) {
         delete_deck(owner, deck_id);
     }
 
-    public fun edit_deck_name(owner: &signer, deck_id: ObjectID, new_name: String) {
+    public fun edit_deck_name(
+        owner: &signer, deck_id: ObjectID, new_name: String
+    ) {
         let _ = owner;
         check_name(new_name);
 
@@ -77,7 +83,9 @@ module anki::deck {
         emit(DeckNameEditedEvent { id: deck_id, new_name, old_name });
     }
 
-    public entry fun edit_deck_name_entry(owner: &signer, deck_id: ObjectID, new_name: String) {
+    public entry fun edit_deck_name_entry(
+        owner: &signer, deck_id: ObjectID, new_name: String
+    ) {
         edit_deck_name(owner, deck_id, new_name);
     }
 
@@ -118,47 +126,20 @@ module anki::deck {
         remove_card_from_deck(owner, deck_obj, card_obj);
     }
 
-    public fun review_card(
-        owner: &signer,
-        deck_obj: &mut Object<Deck>,
-        card_index: u64,
-        quality: u8,
-        current_date: u64
-    ) {
-        let _ = owner;
-
-        // assert!(object::owner(deck_obj) == signer::address_of(owner), 1); // ensure only owner can review card
-        let deck = object::borrow_mut(deck_obj);
-        let card_id = vector::borrow(&mut deck.cards, card_index);
-        let card = object::borrow_mut_object(owner, *card_id);
-        card::review_card(owner, card, quality, current_date);
-    }
-
-    public entry fun review_card_entry(
-        owner: &signer,
-        deck_obj: &mut Object<Deck>,
-        card_index: u64,
-        quality: u8,
-        current_date: u64
-    ) {
-        review_card(owner, deck_obj, card_index, quality, current_date);
-    }
-
-    public fun get_due_cards(
-        owner: &signer, deck_obj: &Object<Deck>, current_date: u64
-    ): vector<u64> {
+    public fun get_due_cards(owner: &signer, deck_obj: &Object<Deck>): vector<ObjectID> {
         let _ = owner;
 
         // assert!(object::owner(deck_obj) == signer::address_of(owner), 1); // ensure only owner can get due cards
         let deck = object::borrow(deck_obj);
-        let due_cards = vector::empty();
+        let due_cards = vector::empty<ObjectID>();
         let i = 0;
         let len = vector::length(&deck.cards);
         while (i < len) {
             let card_id = vector::borrow(&deck.cards, i);
             let card_obj = object::borrow_object<Card>(*card_id);
-            if (card::get_due_date(card_obj) <= current_date) {
-                vector::push_back(&mut due_cards, i);
+            let card = object::borrow(card_obj);
+            if (card::is_due(card)) {
+                vector::push_back(&mut due_cards, *card_id);
             };
             i = i + 1;
         };
