@@ -1,0 +1,14 @@
+[package]
+name = "anki"
+version = "0.0.1"
+
+[dependencies]
+MoveStdlib = { git = "https://github.com/rooch-network/rooch.git", subdir = "frameworks/move-stdlib", rev = "main" }
+MoveosStdlib = { git = "https://github.com/rooch-network/rooch.git", subdir = "frameworks/moveos-stdlib", rev = "main" }
+RoochFramework = { git = "https://github.com/rooch-network/rooch.git", subdir = "frameworks/rooch-framework", rev = "main" }
+
+[addresses]
+anki = "0x647ee4dcd6a78fabd4e0cb1f54e6d374e0588976d2e353e1beb6441046e7fc58"
+std = "0x1"
+moveos_std = "0x2"
+rooch_framework = "0x3"
