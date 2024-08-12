@@ -4,6 +4,7 @@ import { FormattedDeck } from '@/utils/types'
 import { DeckCard } from './deck-card'
 import { Label } from './ui/label'
 import { Switch } from './ui/switch'
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from './ui/tooltip'
 
 export function DeckListPage() {
   const deckResp = useDecks()
@@ -18,7 +19,38 @@ export function DeckListPage() {
           <h1 className="text-2xl font-bold">Your Decks</h1>
           <div className="flex items-center space-x-2">
             <Switch id="test-mode" checked={testMode} onCheckedChange={setTestMode} />
-            <Label htmlFor="test-mode">Test Mode</Label>
+            <Label htmlFor="test-mode" className="flex items-center gap-1">
+              <span>Test Mode</span>
+              <TooltipProvider>
+                <Tooltip delayDuration={300}>
+                  <TooltipTrigger>
+                    <span className="cursor-pointer text-gray-400 hover:text-gray-500 transition-colors duration-300">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                      </svg>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-64">
+                    <p>
+                      Skip review cycles and study all cards in the deck. This allows you to observe
+                      how card intervals change over time.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </Label>
           </div>
         </div>
 
