@@ -4,6 +4,7 @@ import { useAppSession, useDecks } from '@/hooks'
 import { useConnectWallet, useCurrentWallet, useWallets } from '@roochnetwork/rooch-sdk-kit'
 import { AddDeckDialog } from './add-deck-dialog'
 import { Button } from './ui/button'
+import SessionRequiredWrapper from './session-required-wrapper'
 
 export function TopRightActions() {
   const { sessionKey, handlerCreateSessionKey, sessionLoading } = useAppSession()
@@ -16,9 +17,15 @@ export function TopRightActions() {
 
   return (
     <div className="flex items-center gap-4">
-      <AddDeckDialog onCreated={decksResp.refetch}>
-        <Button variant="secondary">New Deck</Button>
-      </AddDeckDialog>
+      {sessionKey ? (
+        <AddDeckDialog onCreated={decksResp.refetch}>
+          <Button variant="secondary">New Deck</Button>
+        </AddDeckDialog>
+      ) : (
+        <SessionRequiredWrapper>
+          <Button variant="secondary">New Deck</Button>
+        </SessionRequiredWrapper>
+      )}
       <div>
         {wallets.length === 0 ? (
           <div>

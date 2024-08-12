@@ -1,10 +1,11 @@
-import { useDueCardIds } from '@/hooks'
+import { useAppSession, useDueCardIds } from '@/hooks'
 import { FormattedDeck } from '@/utils/types'
 import Link from 'next/link'
 import { AddCardDialog } from './add-card-dialog'
 import { StudyDialog } from './study-dialog'
 import { Button } from './ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
+import SessionRequiredWrapper from './session-required-wrapper'
 
 interface DeckCardProps {
   deck: FormattedDeck
@@ -13,6 +14,7 @@ interface DeckCardProps {
 
 export function DeckCard({ deck, onAddCard }: DeckCardProps) {
   const dueCards = useDueCardIds(deck.id)
+  const { sessionKey } = useAppSession()
 
   const notStudiedCardCount = dueCards.ids?.length ?? 0
   const totalCardCount = deck.cardCount
@@ -47,19 +49,31 @@ export function DeckCard({ deck, onAddCard }: DeckCardProps) {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between gap-2">
-        <AddCardDialog
-          deckId={deck.id}
-          onCreated={() => {
-            dueCards.refetch()
-            onAddCard()
-          }}
-        >
-          <Button variant="secondary">Add Cards</Button>
-        </AddCardDialog>
+        {sessionKey ? (
+          <AddCardDialog
+            deckId={deck.id}
+            onCreated={() => {
+              dueCards.refetch()
+              onAddCard()
+            }}
+          >
+            <Button variant="secondary">Add Cards</Button>
+          </AddCardDialog>
+        ) : (
+          <SessionRequiredWrapper>
+            <Button variant="secondary">Add Cards</Button>
+          </SessionRequiredWrapper>
+        )}
 
-        <StudyDialog deckId={deck?.id}>
-          <Button variant="outline">Start Learning</Button>
-        </StudyDialog>
+        {sessionKey ? (
+          <StudyDialog deckId={deck?.id}>
+            <Button variant="outline">Start Learning</Button>
+          </StudyDialog>
+        ) : (
+          <SessionRequiredWrapper>
+            <Button variant="outline">Start Learning</Button>
+          </SessionRequiredWrapper>
+        )}
       </CardFooter>
     </Card>
   )
