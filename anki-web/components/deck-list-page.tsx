@@ -23,8 +23,8 @@ export function DeckListPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {deckResp.data?.map((deck) => {
-            return (
+          {deckResp.isPending || (deckResp.data && deckResp.data.length > 0) ? (
+            deckResp.data.map((deck) => (
               <DeckCard
                 key={deck.id}
                 deck={deck as unknown as FormattedDeck}
@@ -32,8 +32,17 @@ export function DeckListPage() {
                   await deckResp.refetch()
                 }}
               />
-            )
-          })}
+            ))
+          ) : (
+            <div className="border-2 border-dashed border-gray-300 h-[232px] rounded-lg p-6 flex items-center">
+              <div className="text-center w-full flex flex-col gap-1">
+                <p className="text-base font-medium text-gray-700">No decks yet</p>
+                <p className="text-sm text-gray-600">
+                  Please click right top button to create a new deck.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
