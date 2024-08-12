@@ -6,6 +6,8 @@ Anki 是一个开源的记忆卡片学习应用，即使你没有用过，也可
 
 Rooch Anki 是一个基于 Rooch 的仿 Anki Web App，利用 Rooch Object 定义后端数据结构，利用 Rooch Session 得到接近 Web2 应用的体验。
 
+![Rooch Anki](https://github.com/user-attachments/assets/8f063121-761c-4bdd-bc91-decc8e92c446)
+
 在 Anki 的记忆算法中，卡片有多种状态：
 
 - 新卡片（New）
