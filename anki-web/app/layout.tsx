@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import { PropsWithChildren } from 'react'
 import { Providers } from '@/components/providers'
+import { Metadata } from 'next'
 
 const fontHeading = Inter({
   subsets: ['latin'],
@@ -17,6 +18,11 @@ const fontBody = Inter({
   display: 'swap',
   variable: '--font-body',
 })
+
+export const metadata: Metadata = {
+  title: 'Rooch Anki',
+  description: 'Explore the core idea of Anki on Rooch',
+}
 
 export default function Layout({ children }: PropsWithChildren) {
   return (
