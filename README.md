@@ -4,6 +4,10 @@
 
 Rooch Anki 是一个基于 Rooch 的仿 Anki Web App，利用 Rooch Object 定义后端数据结构，利用 Rooch Session 得到接近 Web2 应用的体验。
 
+<div align="center">
+<a href="https://github.com/newraina/rooch-anki">项目地址</a> | <a href="https://rooch-anki.vercel.app/">体验地址</a>
+</div>
+
 ![Rooch Anki](https://github.com/user-attachments/assets/8f063121-761c-4bdd-bc91-decc8e92c446)
 
 Anki 是一个开源的记忆卡片学习应用，即使你没有用过，也可能在其他背单词软件中见过它的影子。它模拟真实抽认卡片的学习方式，**每张卡片都有正面和背面**，正面是问题，背面是答案。用户可以根据自己的熟悉程度选择卡片的状态，系统会根据用户的选择调整下次复习的时间。
@@ -15,7 +19,7 @@ Anki 是一个开源的记忆卡片学习应用，即使你没有用过，也可
 - 复习中（Review）
 - 重新学习（Relearning）
 
-为了简化实现，第一个版本中只实现了 Review 状态，模拟了最核心的 Anki 算法：**间隔重复**的简单版。每天用户会得到当天需要复习的卡片，用户自己选择熟悉程度，系统会根据用户的选择调整下次复习的时间。
+为了简化实现，Rooch Anki 第一个版本中只实现了 Review 状态，模拟了最核心的 Anki 算法：**间隔重复**的简单版。每天用户会得到当天需要复习的卡片，用户自己选择熟悉程度，系统会根据用户的选择调整下次复习的时间。
 
 ## 核心概念
 
@@ -68,7 +72,6 @@ https://github.com/user-attachments/assets/abdc34b8-5325-4c53-abc1-561e195d4488
 
 ### 创建 Session
 
-当你连接钱包之后，连接钱包按钮会变成创建 Session 按钮。如果你在连接钱包后还没创建
-Session 就试图操作 Card 和 Deck，系统会引导你创建 Session。
+当你连接钱包之后，连接钱包按钮会变成创建 Session 按钮。如果你在连接钱包后还没创建 Session 就试图操作 Card 和 Deck，系统会引导你创建 Session。
 
 https://github.com/user-attachments/assets/84bab27e-557b-4b44-8889-0fc56dac1302
